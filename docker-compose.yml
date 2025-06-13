@@ -2,14 +2,20 @@ services:
   pyspark-notebook:
     image: jupyter/pyspark-notebook
     container_name: pyspark-notebook
+    restart: no
     ports:
       - "4040:4040"
       - "8888:8888"
-    volumes:
-      - ./data:/home/jovyan/data
-      - ./code:/home/jovyan/code
     environment:
       - JUPYTER_ENABLE_LAB=yes
       - PYSPARK_SUBMIT_ARGS=--packages io.delta:delta-core_2.12:2.4.0,org.apache.hadoop:hadoop-aws:3.3.2,com.databricks:spark-xml_2.12:0.17.0 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog pyspark-shell
+    volumes:
+      - ./data:/home/jovyan/data
+      - ./code:/home/jovyan/code
     command: start-notebook.sh --NotebookApp.token=''
-    restart: no
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8888"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
