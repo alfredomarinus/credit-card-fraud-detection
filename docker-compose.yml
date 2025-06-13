@@ -1,0 +1,14 @@
+services:
+  pyspark-notebook:
+    image: jupyter/pyspark-notebook
+    container_name: pyspark-notebook
+    ports:
+      - "4040:4040"
+      - "8888:8888"
+    volumes:
+      - ./data:/home/jovyan/data
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - PYSPARK_SUBMIT_ARGS=--packages io.delta:delta-core_2.12:2.4.0,org.apache.hadoop:hadoop-aws:3.3.2,com.databricks:spark-xml_2.12:0.17.0 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog pyspark-shell
+    command: start-notebook.sh --NotebookApp.token=''
+    restart: no
