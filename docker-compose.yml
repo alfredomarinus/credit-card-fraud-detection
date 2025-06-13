@@ -19,3 +19,10 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    networks:
+    - data-stack
+
+networks:
+  data-stack:
+    driver: bridge
+    name: data-stack
